@@ -33,10 +33,32 @@
     "styled-components": "^4.2.0",
     "typeface-source-sans-pro": "^0.0.54",
     "typography": "^0.16.19",
-    "typography-theme-fairy-gates": "^0.16.19"
+    "typography-theme-fairy-gates": "^0.16.19",
+    "@reach/router": "^1.2.1",
+    "classnames": "^2.2.6",
+    "facepaint": "^1.2.1",
+    "keyboardjs": "^2.5.1",
+    "react-feather": "^1.1.6",
+    "react-github-button": "^0.1.11",
+    "react-images": "^0.5.19",
+    "react-stickynode": "^2.1.1",
+    "react-use": "^8.1.1",
+    "rebound": "^0.1.0",
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
-    "prettier": "^1.17.0"
+    "@types/classnames": "^2.2.7",
+    "@types/prismjs": "^1.9.1",
+    "@types/reach__router": "^1.2.4",
+    "@types/react": "^16.8.13",
+    "@types/react-dom": "^16.8.4",
+    "@types/styled-components": "^4.1.14",
+    "gatsby-plugin-typescript": "^2.0.15",
+    "prettier": "^1.16.4",
+    "remark-external-links": "^4.0.0",
+    "tslint": "^5.15.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.4.3"
   },
   "homepage": "https://github.com/pedronauck/gatsby-starter-docz#readme",
   "keywords": [

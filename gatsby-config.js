@@ -1,8 +1,8 @@
 module.exports = {
   siteMetadata: {
-    title: `Coolest Library`,
-    author: `Pedro Nauck`,
-    description: `Gatsby starter with Docz and a blog for your documentation`,
+    title: `Mymoid developers`,
+    author: `dalonso`,
+    description: `Mymoid dev experience documentation`,
   },
   __experimentalThemes: [
     {
@@ -10,6 +10,7 @@ module.exports = {
     },
   ],
   plugins: [
+    `gatsby-plugin-typescript`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
