@@ -86,6 +86,11 @@ export const TOPBAR_LINKS: MenuListItem[] = [
     children: 'Documentation',
     to: '/docs/how-mymoid-works',
   },
+  {
+    id: 2,
+    children: 'Blog',
+    to: '/blog/hello-world',
+  }
 ]
 
 export const Topbar = () => {
@@ -109,13 +114,6 @@ export const Topbar = () => {
                 </Component>
               )
             })}
-          <IconLink
-            as="a"
-            href="http://mymoid.developers/blog/hello-world/"
-            target="_blank"
-          >
-            Blog
-          </IconLink>
           <IconLink
             as="a"
             href="https://github.com/technoactivity"
