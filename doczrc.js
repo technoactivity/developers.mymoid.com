@@ -20,9 +20,11 @@ export default {
   menu: [
     {
       name: 'Getting Started',
-      menu: [
-        'How mymoid works',
-      ],
+      menu: ['How mymoid works'],
+    },
+    {
+      name: 'Api Reference',
+      menu: ['Payment Gateway Rest'],
     },
   ],
   onCreateWebpackChain: config => {
