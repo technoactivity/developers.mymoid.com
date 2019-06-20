@@ -229,13 +229,7 @@ export const Sidebar: SFC<SidebarProps> = ({
                     const doc = docs && docs.find(doc => doc.name === item.name)
                     if (!doc) return null
                     return doc.externalLink ? (
-                      <ExternalLink
-                        href={
-                          process.env.PAYMENT_GATEWAY_DOCS ||
-                          'https://apidocumentation.mymoid.com/'
-                        }
-                        target="_blank"
-                      >
+                      <ExternalLink href={doc.externalLink} target="_blank">
                         {doc.name}
                       </ExternalLink>
                     ) : (

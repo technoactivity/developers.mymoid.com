@@ -24,7 +24,12 @@ export default {
     },
     {
       name: 'Api Reference',
-      menu: ['Payment Gateway Rest'],
+      menu: [
+        'Our software for you',
+        'Payment Gateway Rest',
+        'Mymoid graphql',
+        'Payment Form',
+      ],
     },
   ],
   onCreateWebpackChain: config => {

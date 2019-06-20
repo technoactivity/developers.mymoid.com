@@ -1,0 +1,24 @@
+---
+name: Payment Form
+route: /payment-form
+menu: Api Reference
+---
+
+# Payment Form
+
+There are a variety of ways to send payment data to Mymoid. If you wish to implement a custom checkout experience while still limiting your PCI compliance, the recommended approach is to use the iFrame payment form. This allow you to store card data in your Mymoid vault without it ever touching your server environment.
+
+## Installation
+
+```html
+<iframe width="100%" height="585" src={`https://sandbox.mymoid.com/tpv/?p=${shortCode }`} />
+```
+
+> ### Tips and tricks
+>
+> After you attached Payment Form in your project, you may find it convenient to customize two attributes in your `<iframe />`, depens on the parent container, 'with' anf 'height'.
+
+
+## Customization
+
+Something ...
