@@ -84,7 +84,7 @@ export const TOPBAR_LINKS: MenuListItem[] = [
   {
     id: 1,
     children: 'Documentation',
-    to: '/docs/how-mymoid-works',
+    to: '/docs/',
   },
   {
     id: 2,
