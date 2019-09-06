@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Fragment, SFC } from 'react'
-import { PageProps } from 'docz'
+import { PageProps, useConfig } from 'docz'
 import { useWindowSize } from 'react-use'
 import styled from 'styled-components'
 
@@ -33,7 +33,8 @@ const Document = styled.div`
 `
 
 export const Page: SFC<PageProps> = ({ children, doc, location }) => {
-  const { parent, fullpage, name } = doc
+  const { parent, fullpage, name, edit = true, link } = doc
+  const { repository } = useConfig()
   const { width } = useWindowSize()
   const isAtLeastDesktop = width > breakpoints.tablet
   // const showSidebar = Boolean(parent)
@@ -42,6 +43,7 @@ export const Page: SFC<PageProps> = ({ children, doc, location }) => {
   const pathname = location && location.pathname
 
   console.log(`Page name: ${name}`) // eslint-disable-line
+  console.log(`Page doc: ${doc}`) // eslint-disable-line
 
   return (
     <React.Fragment>
@@ -57,7 +59,16 @@ export const Page: SFC<PageProps> = ({ children, doc, location }) => {
             {isAtLeastDesktop && showSidebar && (
               <Sidebar menu={menuParent} pathname={pathname} />
             )}
-            <Document>{children}</Document>
+            <Document>
+              {children}
+              {edit && (
+                <div style={{ marginTop: 80 }}>
+                  <a href={link} target="blank">
+                    Edit this page
+                  </a>
+                </div>
+              )}
+            </Document>
           </Container>
         )}
       </Wrapper>
