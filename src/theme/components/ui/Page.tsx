@@ -43,7 +43,7 @@ export const Page: SFC<PageProps> = ({ children, doc, location }) => {
   const menuParent = parent || doc.name
   const pathname = location && location.pathname
 
-  const currentDoc = docs.find(({ route }) => route === location.pathname)
+  const currentDoc = docs.find(({ route }) => route === location.pathname || {})
 
   return (
     <React.Fragment>
