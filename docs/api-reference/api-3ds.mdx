@@ -1,0 +1,331 @@
+---
+name: API methods for SCA in Mymoid
+route: /api-3ds
+menu: Api Reference
+---
+
+# API methods for SCA in Mymoid
+
+- [API methods for SCA in Mymoid](#api-methods-for-sca-in-mymoid)
+  * [3ds Authentication](#3ds-authentication)
+    + [Authentication responses](#authentication-responses)
+      - [Autentication Type](#autentication-type)
+      - [TheeeDs Status](#theeeds-status)
+      - [TheeeDs Data](#theeeds-data)
+      - [Action](#action)
+    + [Authentication post actions](#authentication-post-actions)
+      - [Frictionless response](#frictionless-response)
+      - [Redirection response](#redirection-response)
+      - [Fingerprint response](#fingerprint-response)
+        * [3ds-complete-fingerprint operation](#3ds-complete-fingerprint-operation)
+          + [**a) Interpret the post-fingerprint response**](#--a--interpret-the-post-fingerprint-response--)
+          + [**b) Ignore the fingerprint post response and just wait**](#--b--ignore-the-fingerprint-post-response-and-just-wait--)
+      - [Fingerprint plus redirection response](#fingerprint-plus-redirection-response)
+  * [3ds Payment](#3ds-payment)
+  * [About exclusions](#about-exclusions)
+    + [MoTo payments](#moto-payments)
+    + [MIT payments](#mit-payments)
+  * [About Redsys](#about-redsys)
+
+------
+
+
+
+At Mymoid we have made an effort to simplify and isolate our customers, as much as possible, from the details of 3DS implementation. Therefore, we have decided to establish two conceptual steps to make a payment with 3DS authentication, an authentication step and an authenticated executed payment step.
+
+These two steps will always be necessary to make the payment of a money order. Also, in the case of a FingerPrint requirement, a third step will be necessary.
+
+
+
+## 3ds Authentication
+
+The purpose of this step is to start and execute the 3DS authentication negotiation to obtain the 3DS parameters that allow us to subsequently proceed to execute an authenticated payment. The output of this operation depends on the 3DS flow required. As we saw previously, in 3DS there are four possible types of flow:
+
+- Frictionless
+- Redirection
+- Fingerprint
+- Fingerprint + Redirection, just is a concatenate iteration of two previous flows.
+
+
+
+### Authentication responses
+
+The details of each flow can be read in the previous documentation, what is really important here is that at Mymoid we have designed a response format that remains homogeneous between the different flows. Our JSON response has a set relevant fields.
+
+
+
+#### Autentication Type
+
+The Autentication Type field indicates the type of 3DS flow required. Is a enumerated with the following values:
+
+- FRICTIONLESS
+- FINGERPRINT
+- REDIRECTION
+
+
+
+#### TheeeDs Status
+
+This field indicates if the 3DS flow is already complete or is pending an action. The possible values are PROCESSING or DONE. Important, this status doesn’t indicate whether the authentication was successful or not, it simply indicates the progress of the authentication action.
+
+
+
+#### TheeeDs Data
+
+Is an important field. This field is a JSON object with a set of 3DS parameters negotiated in the authentication flow.
+
+We will not go into detail in each of the fields. For our purposes of simplicity, it is only relevant to you to know that it is an object with an indeterminate number of parameters. Take this into account in your implementation. These parameters will be the ones that we use in the next step of the authenticated payment. You will only have to copy them at the request of that step. It is also important to know that the content of this "theeDsData" object is signed and that therefore you will not be able to add, remove or modify any of its fields.
+
+In some flows, like the redirection, at the moment of response this field will be empty.
+
+
+
+#### Action
+
+As we saw in the documentation about 3DS, some flow like Redirection or Fingerprint needs some extra action on the client side. This field is a JSON object with three parameters that describe the action to be performed.
+
+- *Http method*
+  - The HTTP verb to execute, “POST” or “GET”.
+- *Url*
+  - The target url of the action.
+- *Params*
+  - A set of parameters that will be part of the requested action. For “POST” action, the parameters are the key-value pairs of the form-data.For “GET” action, the parameters are the key-value pairs of query params. 
+
+For a Frictionless flow we always get an empty action field. For a Redirection flow, we obtain a GET or POST (Redsys) action, i.e. a redirection action to a bank website where we must send the user. The user will solve the challenge and will be redirected to the URL configured for you in our system. For a FingerPrint flow, we obtain a POST action that describes the submission of a form that must be rendered and executed in the user's browser. 
+
+The actions to be taken in each 3DS flow are detailed below.
+
+
+
+### Authentication post actions
+
+#### Frictionless response
+
+It is the easiest flow, it indicates that it is not necessary to carry out additional actions of the 3DS authentication process. As long as we get a flow of this type, we can proceed to the 3ds payment operation.
+
+Example response:
+
+```json
+{
+   "status": true,
+   "code": 0,
+   "data": {
+       "authenticationType": "FRICTIONLESS",
+       "threeDsStatus": "DONE",
+       "threeDsData": {
+           "3ds_trxid": "fb001910-91d8-4a56-836b-6322e488eb6a",
+           "3ds_valid_payment": "Y",
+           "z1": "XZZ72dacad4f73908C2BBMWP5URTFBUH",
+           "3ds_version": "2.1.0",
+           "3ds_cavv": "MTIzNDU2Nzg5MDA5ODc2NTQzMjE=",
+           "z55": "XZZ72dacad4f73908C2LR7GLSAWVFFFB",
+           "3ds_dstrxid": "8f5c9a80-f289-4dbe-bb38-6ef22ea16af3",
+           "K": "cab35869316cda467afc126ffd32cac456441d7267c1a1b1ed7f3ad3933d4a31",
+           "3ds_eci": "02",
+           "3ds_status": "Y"
+       }
+   }
+}
+```
+
+
+
+#### Redirection response
+
+We need to perform a redirection in the user’s browser. The target of redirection is provided in the “url” field. Currently in our implementation it is not necessary to add extra parameters to this url, therefore the "params" field of the response will be empty. 
+
+When the user solves the challenge, they will be redirected by the bank to the url that the Merchant indicated in the onboarding process in Mymoid. Similarly, if the challenge is incorrectly resolved, the bank redirects the user's browser to the same url.
+
+When the bank redirects the user's browser to the indicated URL, it does so with a GET request accompanied by a set of query parameters. This information is important and is part of the request that will be sent in the secure payment request. As a developer, you should build a JSON with all received query parameters. That JSON is the "threeDsData" object that we get directly from the API for example, in a frictionless flow. As we said previously, these fields are signed so none of them can be added, removed or modified.
+
+With this object we can proceed to the 3ds payment operation.
+
+Example response:
+
+```json
+{
+   "status": true,
+   "code": 0,
+   "data": {
+       "authenticationType": "REDIRECTION",
+       "threeDsStatus": "PROCESSING",
+       "action": {
+           "httpMethod": "GET",
+           "url": "https://bankchallenge/request/MYMOI978/e6360fd90c62b040a808b6e0211294f5735b"
+       }
+   }
+}
+```
+
+
+
+#### Fingerprint response
+
+From a developer point of view, the fingerprint flow is the most complicated. As mentioned in the 3DS documentation, the main idea of this flow is to identify a fingerprint of the user's browser. The response in a Fingerprint script indicates that a POST request needs to be executed.. To do this, a form must be generated in the user's browser with the parameters described in the "params" field of the "action" object. Submitting this form must be done in a hidden iframe.
+
+Example response (3ds-authentication with Fingerprint):
+
+```json
+{
+   "status": true,
+   "code": 0,
+   "data": {
+       "authenticationType": "FINGERPRINT",
+       "threeDsStatus": "PROCESSING",
+       "action": {
+           "httpMethod": "POST",
+           "url": "https://bank3ds-method",
+           "params": {
+               "threeDSMethodData": "eyJ0aHJlZURTTWV0aG9kTm90aWZpY2F0aW9uVVJMIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3YxL3BheW1lbnRzLzNkcy1ub3RpZmljYXRpb24tZmluZ2VycHJpbnQiLCJ0aHJlZURTU2VydmVyVHJhbnNJRCI6ImM2MDRmNWJkLTczYWUtNDJkNC04ZWYxLWRiNTI0NjYzYzIxYiJ9"
+           }
+       },
+       "threeDsData": {
+           "3ds_trxid": "c604f5bd-73ae-42d4-8ef1-db524663c21b",
+           "z1": "XZZ7231c7c992b4948EY7H4LCIUTZB2N",
+           "3ds_method": "https://fingerprint/3ds-method",
+           "3ds_version": "2.1.0",
+           "z55": "XZZ7231c7c992b4948E7PJWCDXJ2BC7L"
+       }
+   }
+}
+```
+
+Once this submit has been made, we must proceed to report this fact based on the response obtained. To do this, we will make a request to the 3ds-complete-fingerprint operation under certain conditions. Next, we will see how to proceed with this step.
+
+##### 3ds-complete-fingerprint operation 
+
+The purpose of this operation is to inform Mymoid that the Fingerprint submission has been made. Once again, the process has been simplified with the developer in mind and reducing the infrastructure required.
+
+The request contains three parameters:
+
+- *Payment order identification*
+  - As always, is a Mymoid business parameter with the payment order in use.
+- *Time out finished*
+  - A boolean field with default value of “false”. This field indicates if the waiting to obtain a response after submitting the fingerprint form is exhausted. Is an optional field, if is omitted the default value is applied.
+- *ThreeDs data*
+  - It is the JSON object obtained in the authentication request of the Fingerprint flow. As always, this object cannot be modified.
+
+There are two ways to interpret the response from the authentication method and then construct the call to the completion method.
+
+###### **a) Interpret the post-fingerprint response**
+
+When we send the fingerprint we start a timer. After this we should wait a maximum of 10 seconds for the answer to arrive. The response received, inside the hidden iframe, is an HTML + Javascript code that uses the `window.postMessage ()` API to establish an event communication between windows objets. This JS sends a "Ready" event that the host window can listen to to determine that the response was obtained from the Fingerprint.
+
+After receiving the event we can make the call to the method “complete”. We simply use the TheeDsData obtained in authentication and set the parameter "timeoutFinished" to false. Example:
+
+```json
+{
+ "paymentOrderId": "24434879546214cf7e920b7ae90236d3d4b330ac8724507d8ae81109199a2ce7",
+ "timeoutFinished": false,
+ "threeDsData": {
+   "3ds_trxid": "0321d2da-f97e-407d-88ee-2b3d20eb1ef5",
+   "z1": "XZZ72c23a0d13c3e932YZVL3ZZ36RHO5",
+   "3ds_method": "https://fingerprint/3ds-method",
+   "3ds_version": "2.1.0",
+   "z55": "XZZ72c23a0d13c3e9322GYJHNHRZJCGH"
+ }
+}
+```
+
+If, on the other hand, the timer runs out, we make the same request to the "complete" method but with the "timeoutFinished" value set to true.
+
+###### **b) Ignore the fingerprint post response and just wait**
+
+If you don’t want to interpret any response after submitting the Fingerprint, you can simply wait 10 seconds before calling the "complete" method with a value of "timeoutFinished" to true. The difference with the scenario described above is that here the 10 seconds always run out, however in scenario [a)](#interpret-the-post-fingerprint-response) Interpret the post-fingerprint response**) the interaction of requests can be more quickly and therefore make the end user experience more satisfactory. Example:
+
+```json
+{
+ "paymentOrderId": "24434879546214cf7e920b7ae90236d3d4b330ac8724507d8ae81109199a2ce7",
+ "timeoutFinished": true,
+ "threeDsData": {
+   "3ds_trxid": "0321d2da-f97e-407d-88ee-2b3d20eb1ef5",
+   "z1": "XZZ72c23a0d13c3e932YZVL3ZZ36RHO5",
+   "3ds_method": "https://fingerprint/3ds-method",
+   "3ds_version": "2.1.0",
+   "z55": "XZZ72c23a0d13c3e9322GYJHNHRZJCGH"
+ }
+}
+
+```
+
+In any case, once the completion response is complete, we will get a response similar to the "3ds-authtentication" method with the Frictionless flow and "threeDsStatus" sets to "DONE". With this scenario we can now proceed to the authenticated payment request. The "threeDsData" used in the payment will be the one obtained from this last call to the "complete" method.
+
+If after calling the "complete" operation a redirection flow request is obtained, then we must proceed to the Fingerprint plus redirection flow.
+
+
+
+#### Fingerprint plus redirection response
+
+The last flow is actually a combination of the Fingerprint flow and the Redirect flow. It happens that once the Fingerprint flow is performed (call to the "complete" operation) it is possible that the response is not a Frictionless flow but a Redirection flow. In this case we could not yet proceed to the authenticated payment, we should first solve the redirection flow as detailed above
+
+
+
+## 3ds Payment
+
+Once the 3DS authentication process has been completed and the data that identifies it obtained ("threeDsData"), we can proceed to payment. It is a simple step. We simply pass it the information of the "theeDsData" object in the body of the request.Example of body request:
+
+```json
+{
+ "3ds_trxid": "cdc81b5b-e2a0-4631-916c-14f25aa2e13b",
+ "3ds_valid_payment": "Y",
+ "z1": "XZZ72ce9d7788b59A0CJQ3PQH7PZVDY3",
+ "3ds_version": "2.1.0",
+ "3ds_cavv": "MTIzNDU2Nzg5MDA5ODc2NTQzMjEa",
+ "z55": "XZZ72edf3d43354eFB1IWNZYRCXTNEWX",
+ "3ds_dstrxid": "6f759aa2-5094-42c0-99a9-460b1d942737",
+ "K": "71eda6ec1cbc164f2edd0194ab265b6e778d80d1cbba40fb9366fafd3ffa2525",
+ "3ds_eci": "02",
+ "3ds_status": "Y"
+}
+```
+
+If the payment was successful, we will get a response describing the most relevant metadata of the payment order. In the event of an error, the appropriate error code will be returned.
+
+
+
+## About exclusions
+
+At Mymoid we support the following exclusions to the PSD2 SCA standard:
+
+- MoTo (Mail order and telephone order)
+
+- MIT (Merchant Initiated Transactions)
+
+The regulations establish that for this type of operation the SCA process can be excluded. 
+
+At Mymoid we try to simplify these exclusions for the end user. For this reason we try to make our payment flow similar to the one previously exposed, that is, we will have a call to the 3DS authentication operation followed by a call to the authenticated payment operation.
+
+### MoTo payments
+
+To proceed with this type of payment, we will make a request in the usual way to the "3ds-authentication" method. The response will be always a Frictionless flow. Something like:
+
+Example:
+
+```json
+{
+   "status": true,
+   "code": 0,
+   "data": {
+       "authenticationType": "FRICTIONLESS",
+       "threeDsData": {
+           "3ds_trxid": "1wrA0IkcKL6Nzo8JaEWubFqamwMG0CTz",
+           "3ds_valid_payment": "Y",
+           "z55": "nRRmlp8uEeIb9u1QMuG6POfONBwPMOfh",
+           "K": "2a6ec87ed46f6dfe11ce99434d20085224a64017a8463f38764e57cbf4596e9f",
+           "3ds_sca_exclusion": "true"
+       }
+   }
+}
+```
+
+Therefore, we proceed to make the payment with the data obtained in the "threeDsData" object. This is all.
+
+### MIT payments
+
+TODO…. (when the implementation is finished)
+
+
+
+## About Redsys
+
+Under the hook the current Redsys implementation at Mymoid works in a different way. The 3DS authentication process occurs on the Redsys side and once the possible Challenges are resolved by the user, the payment is made directly by Redsys. That is, in the Mymoid API authenticated payment execution step, we simply limit ourselves to checking if the order has already been paid. Redsys informs us (Mymoid) in a transparent way that the order has been paid.
