@@ -1,8 +1,8 @@
 {
-  "name": "@pedronauck/gatsby-starter-docz",
+  "name": "@technoactivity/developers.mymoid.com",
   "description": "Gatsby starter with Docz and a blog for your documentation",
   "version": "0.0.1",
-  "author": "Pedro Nauck <pedronauck@gmail.com>",
+  "author": "Denis Alonso <denjalonso@gmail.com>",
   "bugs": {
     "url": "https://github.com/gatsbyjs/gatsby/issues"
   },
@@ -61,7 +61,7 @@
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.4.3"
   },
-  "homepage": "https://github.com/pedronauck/gatsby-starter-docz#readme",
+  "homepage": "https://github.com/technoactivity/developers.mymoid.com#readme",
   "keywords": [
     "gatsby"
   ],
@@ -69,7 +69,7 @@
   "main": "n/a",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pedronauck/gatsby-starter-docz.git"
+    "url": "git+https://github.com/technoactivity/developers.mymoid.com.git"
   },
   "scripts": {
     "build": "gatsby build",

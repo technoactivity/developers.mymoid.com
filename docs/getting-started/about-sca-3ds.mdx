@@ -1,0 +1,85 @@
+---
+name: About SCA and 3DS v2
+route: /about-sca-3ds
+menu: Getting Started
+---
+
+
+# PSD2 SCA and 3DS v2
+
+- [PSD2 SCA and 3DS v2](#psd2-sca-and-3ds-v2)
+  * [About PSD2 and SCA](#about-psd2-and-sca)
+  * [About 3DS 2](#about-3ds-2)
+  * [3DS v2 flows](#3ds-v2-flows)
+    + [Frictionless flow](#frictionless-flow)
+    + [Redirection flow](#redirection-flow)
+    + [Fingerprint flow without additional step](#fingerprint-flow-without-additional-step)
+    + [Fingerprint flow with additional redirection step](#fingerprint-flow-with-additional-redirection-step)
+  * [Exclusion and exemptions to SCA](#exclusion-and-exemptions-to-sca)
+
+------
+
+
+
+The following documentation tries to briefly explain the **PSD2 SCA** standard and its relationship with the 3DS v2 process. The aim is to achieve a familiarization that helps the correct implementation of this directive. This document provides a high-level view of the process that will later help to understand the technical documentation more clearly.
+
+
+
+## About PSD2 and SCA
+
+PSD2 is the second Payments Services Directive whose purpose is to establish security standards for electronic payments. For its part, **Strong Customer Authentication (SCA)** is part of the PSD2 regulation and its purpose is to increase the security of electronic payments by requiring information from users. This information is based on something the user knows, something they own, or something the user is.
+Any issuing and acquiring bank that is located in the European Economic Area, United Kingdom, Norway, Iceland and Liechtenstein must comply with the SCA.
+
+
+
+## About 3DS 2
+
+3DS was designed for the purpose of authenticating credit cards. There are two versions of 3DS, v1 and v2. Version v2 can be seen as an improvement over version 1 that tries to provide a more user friendly experience.
+This improvement of the experience is achieved with the transmission in the background of information that helps to authenticate the user in a transparent way. With this, a frictionless experience is achieved, avoiding requiring the user to interact in the authentication process. Only when it is determined that this identification in the background is not enough, is interaction with the user required.
+
+
+
+## 3DS v2 flows
+
+There are different types of flows, each of them is detailed below.
+
+### Frictionless flow
+
+This is the simplest flow. If we get a Frictionless response during the authentication process, it means that the authentication process has ended and no further action is required. This process. This flow is based on information collected from the user's browser.
+
+### Redirection flow
+
+If during the authentication process the transaction is determined to be risky, then a redirection flow will be necessary. This flow is basically the same as that implemented by the 3DS v1.
+In a flow of this type, the client is redirected to a website where they will have to resolve a challenge as an authentication step.
+
+### Fingerprint flow without additional step
+
+If during the 3DS authentication request it is determined that the data sent in the background is not enough and additional data is required, then it will be required to try a Fingerprint flow.
+At this point a hidden Iframe is rendered in the user's browser and transparently sent to the issuer in the background. It is then when a window of ten seconds opens in which the response of the sender should arrive. Typically this response runs quickly and does not take ten seconds. Once the response has been obtained and informed, the flow ends indicating that a Frictionless response has occurred and therefore the process has ended.
+
+### Fingerprint flow with additional redirection step
+
+It is possible that after completing a Fingerprint flow, the transaction is still considered risky and requires an additional step. This additional step is nothing more than the redirect flow. That is, this flow is actually a flow that combines two previous ones, Fingerprint and Redirection.
+
+
+
+## Exclusion and exemptions to SCA
+
+There are different scenarios for which the SCA regulations do not apply. We call these scenarios exclusions to the SCA standard. They are as follows:
+
+- **Payments made by cards issued outside the European Economic Area in addition to UK, Norway, Liechtenstein and Iceland**
+-  **Payments initiated by phone, mail, or email (MoTo payments)**
+-  **Payments made by anonymous prepaid cards**
+- **Merchant Initiated Transactions (MIT):**
+  -  This is only possible as long as there is a pre-existing agreement between the merchant and the buyer. However, an SCA authentication is required on the initial payment (recurring card transactions).
+
+On the other hand, there are a series of circumstances that are known as exemptions to the SCA standard:
+
+- **Transactions with amount equal or less than 30€**
+  - If the accumulated amount of purchases since the last identification does not exceed € 100 or if the last five purchases have not been exempt.
+- **Recurring payments**
+  -  Except the initial payment
+- **Exception for Transaction Risk Analysis (TRA)**
+  -  If the fraud ratio of the payment institution is limited
+- **Trusted beneficiaries (whitelisting)**
+  -  List of trusted merchants that the customer has authorized so that no authentication is applied

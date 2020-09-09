@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { theme, ComponentsProvider, useConfig } from 'docz'
 import { ThemeProvider } from 'styled-components'
-import webfont from 'webfontloader'
 
 import { config } from './config'
 import { mq, breakpoints } from './styles/responsive'
@@ -9,11 +8,16 @@ import { Global } from './styles/global'
 import { Main } from './components/shared'
 import * as components from './components/ui'
 
-webfont.load({
-  google: {
-    families: ['Inconsolata', 'Zilla Slab:300,400,600'],
-  },
-})
+// https://www.gatsbyjs.org/docs/debugging-html-builds/
+if (typeof window !== `undefined`) {
+  const webfont = require("webfontloader")
+
+  webfont.load({
+    google: {
+      families: ['Inconsolata', 'Zilla Slab:300,400,600'],
+    },
+  })
+}
 
 const map = {
   page: components.Page,
