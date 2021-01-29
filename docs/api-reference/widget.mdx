@@ -1,0 +1,34 @@
+---
+name: Widget
+route: /widget
+menu: Api Reference
+---
+import { Playground, Props } from 'docz'
+import { PaymentForm } from "../../tmp/PaymentForm"
+
+# Widget
+
+
+## Customizing your Widget
+
+### Installation
+
+MYMOID sdk is available on npm [@mymoid/react-component](https://www.npmjs.com/package/@mymoid/style-guide)
+
+To render the widget inside of you application you must import from `@mymoid/package`
+
+```
+import { PaymentForm } from "@mymoid/react-component"
+```
+After that you can inserte `PaymentForm` in you code.
+
+<Playground>
+    <PaymentForm shortCode={"XXXXXX"} />
+</Playground>
+
+### Props of Payment form
+<Props of={PaymentForm} />
+
+### Customization
+
+
