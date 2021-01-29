@@ -71,3 +71,4 @@ yarn-error.log
 
 # Vs code files
 .vscode
+./tmp/
