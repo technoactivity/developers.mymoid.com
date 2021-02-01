@@ -4,31 +4,43 @@ route: /widget
 menu: Api Reference
 ---
 import { Playground, Props } from 'docz'
-import { PaymentForm } from "../../tmp/PaymentForm"
+import {PaymentForm} from '@mymoid/components'
 
 # Widget
-
 
 ## Customizing your Widget
 
 ### Installation
 
-MYMOID sdk is available on npm [@mymoid/react-component](https://www.npmjs.com/package/@mymoid/style-guide)
-
-To render the widget inside of you application you must import from `@mymoid/package`
+MYMOID sdk is available on npm [@mymoid/components](https://www.npmjs.com/package/@mymoid/components)
 
 ```
-import { PaymentForm } from "@mymoid/react-component"
+npm install @mymoid/components
+```
+
+To render the widget inside of you application you must import from `@mymoid/components`
+
+```
+import { PaymentForm } from "@mymoid/components"
 ```
 After that you can inserte `PaymentForm` in you code.
 
 <Playground>
-    <PaymentForm shortCode={"XXXXXX"} />
+    <PaymentForm shortCode="XXXXXX" />
+</Playground>
+
+> NOTE: By default mymoid componet will load some style by default.
+
+### Customization
+
+To change default styled you can pass `brandColor` property to customize.
+
+<Playground>
+    <PaymentForm brandColor="pink" shortCode="XXXXXX" />
 </Playground>
 
 ### Props of Payment form
 <Props of={PaymentForm} />
 
-### Customization
 
 
