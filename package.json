@@ -45,7 +45,8 @@
     "typeface-source-sans-pro": "^0.0.54",
     "typography": "^0.16.19",
     "typography-theme-fairy-gates": "^0.16.19",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "zoid": "^9.0.63"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.7",
