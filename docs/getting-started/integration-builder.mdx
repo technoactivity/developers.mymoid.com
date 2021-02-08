@@ -1,0 +1,180 @@
+---
+name: Integration builder
+route: /integration-builder
+menu: Getting Started
+---
+
+
+# Integration builder
+
+On this part you can learn how to integrate a MYMOID payment form based on react component in your webpage.
+First we will show you how generate a payment order easily and how load this in you webpage.
+
+## Server side
+
+Assuming that you have integrated a "superApp" with mymoid API already. ( if you don`t, click
+[here](https://apidocumentation.mymoid.com))
+
+Serve side like this:
+
+```js
+const express = require('express')
+const superApp = express()
+const fetch = require('node-fetch');
+const port = 3000
+
+superApp.post('/create-payment-order', async (req, res) => {
+
+    const url = 'https://sandbox.mymoid.com/views/button/order'
+    
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${Base64(APP_ID:APP_SECRET)}`
+    }
+
+    const body = {
+        "currency": "EUR",
+        "concept": "Oxford Shoes - Spanish Leather",
+        "reference": "OXF-3479",
+        "amount": 100,
+        "payType": "PAY"
+    }
+
+    const options = {
+        method: 'post',
+        body:    JSON.stringify(body),
+        headers: headers,
+    }
+
+    const { data } = await fetch(url, options)
+    
+    res.send({
+        shortCode: data.shortCode
+    })
+})
+
+superApp.listen(port, () => {
+  console.log(`Super server app listening at http://localhost:${port}`)
+})
+```
+
+Now you get the power 💪
+
+¡You can generate a payment order!
+
+> Note: For this example we need the ´shortCode´ only.
+
+## Client side
+
+To start this part we need a [react](https://reactjs.org/) app.
+
+Assuming that you have a client side like this:
+
+```js
+// App.js
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <p>
+          Super client side
+        </p>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+```
+
+Now you can import mymoid component in your app and insent the payment form componet in your app.
+
+
+```js
+// App.js
+import { PaymentForm } from "@mymoid/components"
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <p>
+          Super client side
+        </p>
+        <PaymentForm />
+      </header>
+    </div>
+  );
+}
+
+export default App;
+```
+
+After that you will need request to your server `superApp` create a new payment order. 
+To do this we will insert a button 'Generate new order'.
+
+```js
+// App.js
+import { PaymentForm } from "@mymoid/components"
+
+ const [shortCode, setShortCode] = useState('');
+
+function async getShortCode() {
+  const {shortCode} = await fetch('http://superApp.com/create-payment-order')
+  return setShortCode(shortCode)
+}
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <p>
+          Super client side
+        </p>
+        <button onClick={getShortCode()}>
+          Generate new order
+        </button>
+        <PaymentForm shortCode={shortCode}/>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+```
+One last thing! We need customize our brand color.
+Add `brandColor` property with you favorite color.
+
+```js
+// App.js
+import { PaymentForm } from "@mymoid/components"
+
+const [shortCode, setShortCode] = useState('');
+
+function async getShortCode() {
+  const {shortCode} = await fetch('http://superApp.com/create-payment-order')
+  return setShortCode(shortCode)
+}
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <p>
+          Super client side
+        </p>
+        <button onClick={getShortCode()}>
+          Generate new order
+        </button>
+        <PaymentForm brandColor='pink' shortCode={shortCode}/>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+```
+
+
+great job!

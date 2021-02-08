@@ -3,12 +3,9 @@ name: Widget
 route: /widget
 menu: Api Reference
 ---
+
 import { Playground, Props } from 'docz'
-import {PaymentForm} from '@mymoid/components'
-
-# Widget
-
-## Customizing your Widget
+import { PaymentForm } from '@mymoid/components'
 
 ### Installation
 
@@ -20,27 +17,28 @@ npm install @mymoid/components
 
 To render the widget inside of you application you must import from `@mymoid/components`
 
+### How use `@mymoid/components`
+
 ```
 import { PaymentForm } from "@mymoid/components"
 ```
+
 After that you can inserte `PaymentForm` in you code.
 
 <Playground>
-    <PaymentForm shortCode="XXXXXX" />
+  <PaymentForm brandColor="pink" shortCode="XXXXXX" />
 </Playground>
 
 > NOTE: By default mymoid componet will load some style by default.
 
-### Customization
+## Customizing your Widget
 
 To change default styled you can pass `brandColor` property to customize.
 
 <Playground>
-    <PaymentForm brandColor="pink" shortCode="XXXXXX" />
+  <PaymentForm brandColor="pink" shortCode="XXXXXX" />
 </Playground>
 
 ### Props of Payment form
+
 <Props of={PaymentForm} />
-
-
-
