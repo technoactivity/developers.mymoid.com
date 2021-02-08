@@ -7,7 +7,7 @@
     "url": "https://github.com/gatsbyjs/gatsby/issues"
   },
   "dependencies": {
-    "@mymoid/components": "^1.0.0-alpha.1",
+    "@mymoid/components": "^1.0.0-alpha.3",
     "@reach/router": "^1.2.1",
     "classnames": "^2.2.6",
     "docz": "1.0.3",
@@ -46,7 +46,7 @@
     "typography": "^0.16.19",
     "typography-theme-fairy-gates": "^0.16.19",
     "webfontloader": "^1.6.28",
-    "zoid": "^9.0.63"
+    "zoid": "^9.0.62"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.7",
